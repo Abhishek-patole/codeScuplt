@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { motion } from "framer-motion";
 
 type Step = {
@@ -49,6 +49,61 @@ export default function VisualizerWithAnimatedBlocks({ step }: Props) {
     backdropFilter: "blur(6px)",
   };
 
+ const narrationQueue: SpeechSynthesisUtterance[] = [];
+
+const speak = (text: string) => {
+  if (!text) return;
+  const utterance = new SpeechSynthesisUtterance(text);
+
+  utterance.rate = 0.95; // slower, more natural
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+  // pick a more human-like voice (if available)
+  const voices = speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.lang.startsWith("en") && v.name.includes("Google"));
+  if (preferred) utterance.voice = preferred;
+
+  // when finished, trigger next narration in queue
+  utterance.onend = () => {
+    narrationQueue.shift();
+    if (narrationQueue.length > 0) {
+      speechSynthesis.speak(narrationQueue[0]);
+    }
+  };
+
+  if (narrationQueue.length === 0) {
+    narrationQueue.push(utterance);
+    speechSynthesis.speak(utterance);
+  } else {
+    narrationQueue.push(utterance);
+  }
+};
+
+const [voiceEnabled, setVoiceEnabled] = React.useState(false);
+
+useEffect(() => {
+  if (!voiceEnabled) return;
+
+  let narration = step.title || "";
+
+  if (step.operation) {
+    narration += `. Operation: ${step.operation}`;
+  }
+  if (step.visit) {
+    narration += `. Visiting index ${step.visit.index} in array ${step.visit.from_array}`;
+  }
+  if (step.found) {
+    narration += `. Found target at index ${step.found.index} in array ${step.found.array}`;
+  }
+  if (step.changed && step.changed.length > 0) {
+    narration += `. Updated variables: ${step.changed.join(", ")}`;
+  }
+
+  speak(narration);
+}, [step, voiceEnabled]);
+
+
   return (
     <div
       style={{
@@ -60,6 +115,9 @@ export default function VisualizerWithAnimatedBlocks({ step }: Props) {
         boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
       }}
     >
+      <button onClick={() => setVoiceEnabled(!voiceEnabled)}>
+  {voiceEnabled ? "🔊 Voice On" : "🔇 Voice Off"}
+</button>
       {/* Step Title */}
       <h3
         style={{

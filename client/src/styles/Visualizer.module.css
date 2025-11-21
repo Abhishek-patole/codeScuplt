@@ -1,0 +1,316 @@
+/* --- Main Container --- */
+/* This section contains the fix for anchoring the controls at the bottom */
+.visualizer {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Changed from 65% to fill the parent container */
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* This makes the content area expand, pushing the controls down */
+.mainContent {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1rem; /* REVERTED: Back to your original padding */
+}
+
+/* --- Empty State --- */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: var(--text-secondary);
+  height: 50%; /* REVERTED: Back to your original height */
+}
+.emptyState h3 {
+  margin: 0 0 0.3rem 0; /* REVERTED: Back to your original margin */
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.emptyState p {
+  margin: 0;
+  max-width: 300px;
+}
+
+/* --- Header & Operation --- */
+.header {
+  text-align: center;
+  margin-bottom: 1rem; /* REVERTED: Back to your original margin */
+  flex-shrink: 0;
+}
+.stepTitle {
+  margin: 0 0 0.6rem 0; /* REVERTED: Back to your original margin */
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.8rem; /* REVERTED: Back to your original font size */
+}
+.operation {
+  font-family: monospace;
+  background: var(--bg-secondary);
+  padding: 0.3rem 0.75rem; /* REVERTED: Back to your original padding */
+  border-radius: 8px;
+  color: var(--primary-color);
+  border: 1px solid var(--border-color);
+  margin: 0 auto;
+  min-height: 24px;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* --- Variable Titles --- */
+.variableName {
+  color: #bfdbfe;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+/* --- Array Styling --- */
+.arrayContainer {
+  margin-bottom: 2rem; /* REVERTED: Back to your original margin */
+}
+.arrayBlocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* REVERTED: Back to your original gap */
+  padding: 0.75rem; /* REVERTED: Back to your original padding */
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.7));
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
+}
+.block {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #475569, #334155);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
+.blockIndex {
+  font-size: 0.60rem; /* REVERTED: Back to your original font size */
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.blockValue {
+  font-size: 1rem; /* REVERTED: Back to your original font size */
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 4px;
+}
+
+/* --- Scalar Styling --- */
+.scalarContainer {
+  margin-top: 0.7rem; /* REVERTED: Back to your original margin */
+}
+.scalarGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem; /* REVERTED: Back to your original gap */
+}
+.scalar {
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  text-align: center;
+  min-width: 90px; /* REVERTED: Back to your original min-width */
+}
+.scalarName {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+.scalarValue {
+  display: block;
+  margin-top: 0.3rem; /* REVERTED: Back to your original margin */
+  font-size: 0.9rem; /* REVERTED: Back to your original font size */
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* --- Controls --- */
+/* This section will remain anchored at the bottom */
+.controls {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+.controls button {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.controls button:hover {
+  transform: translateY(-2px);
+  border-color: #60a5fa;
+  color: #a5cfff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.playButton {
+  background: var(--primary-color);
+  color: white;
+  min-width: 100px;
+  border-color: #22c55e;
+}
+.playButton:hover {
+  background: var(--primary-hover);
+  border-color: #4ade80;
+  color: white;
+}
+.speedControl {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.speedControl input[type="range"] {
+  width: 120px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+/* Style for the context message (e.g., Tested "i < n": true) */
+.context {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #9ca3af; /* A muted gray color */
+  margin: 0.5rem auto 0;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 4px;
+  max-width: 90%;
+}
+
+/* --- STDOUT Styling --- */
+.stdoutContainer {
+  margin-top: 1.5rem; /* A bit more space before the output */
+}
+
+.stdoutContent {
+  font-family: monospace;
+  font-size: 0.9rem;
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  color: #a5cfff; /* A light blue for output text */
+  border: 1px solid var(--border-color);
+  white-space: pre-wrap;   /* Allows text to wrap and respects line breaks */
+  word-wrap: break-word;   /* Breaks long words if necessary */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* Style for the context message (e.g., Tested "i < n": true) */
+.context {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #9ca3af; /* A muted gray color */
+  margin: 0.5rem auto 0;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 4px;
+  max-width: 90%;
+}
+
+/* --- CONSOLE OUTPUT Styling --- */
+.stdoutContainer {
+  margin-top: 1.5rem; /* Space between variables and output */
+}
+
+.stdoutContent {
+  font-family: monospace;
+  font-size: 0.9rem;
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  color: #a5cfff; /* Light blue for output text, distinct from regular variables */
+  border: 1px solid var(--border-color);
+  white-space: pre-wrap;   /* Respects line breaks from multiple console.logs */
+  word-wrap: break-word;   /* Breaks long lines if necessary */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  max-height: 150px; /* Make it scrollable if there's a lot of output */
+  overflow-y: auto;
+}
+
+/* --- Add these new styles to the bottom of your Visualizer.module.css --- */
+/* This is the box that contains the linked list visualization */
+.datastructureView {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+  width: 100%;
+  overflow-x: auto; /* Allows scrolling for very long linked lists */
+}
+
+/* --- Linked List Specific Styles --- */
+.linkedListContainer {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem; /* Small padding so nodes don't touch the edge */
+}
+
+.llNode, .llNull {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background: #475569;
+  border: 1px solid #64748b;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: monospace;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  white-space: nowrap; /* Prevents text from wrapping inside a node */
+}
+
+.llNull {
+  background: #7f1d1d; /* A reddish color for null */
+  border-color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.llArrow {
+  color: #94a3b8; /* Gray for the arrow */
+  margin: 0 0.5rem;
+  flex-shrink: 0; /* Prevents arrow from shrinking */
+}
+
+/* --- Add this ONE new class to Visualizer.module.css --- */
+
+/* This container is used for a linked list variable to make it span the full width */
+.linkedListVariableContainer {
+  /* This tells the grid item to span all columns */
+  grid-column: 1 / -1; 
+  width: 100%;
+}

@@ -3,8 +3,46 @@ import { SignedIn, SignedOut, UserButton, SignIn, SignUp, useAuth } from '@clerk
 // import CodeStudio from './pages/CodeStudio'
 import CodeStudioA from './pages/CodeStudioA'
 import React from 'react'
+import { useNavigate } from "react-router-dom";
+import {  useClerk } from "@clerk/clerk-react";
+import { Header } from "@/components/Homepage/Header";
+import Index from './pages/Index'
+import AlgorithmPlayer from './pages/AlgorithmPlayer';
+import BubbleSort from './pages/sorting algorithm/BubbleSort';
+import BinarySearch from './pages/sorting algorithm/BinarySearch';
+import { AlgorithmShowcase } from './components/Homepage/AlgorithmShowcase';
+import CodeStudioB from './pages/CodeStudioB';
+import AlgoPage from './pages/algopage/AlgoPage';
+import Stack from './pages/stack animation/Stack';
+import Queue from './pages/queue/Queue';
+import ScrollToTop from "./components/ScrollToTop";
+import BinarySearchTree from './pages/BST/BinarySearchTree';
+import Dijkstra from './pages/Dijkstra/Dijktra';
+import Array from './pages/Array/Array';
+import LinkedList from './pages/LinkedList/LinkedList';
+// import JsEngine from "./pages/JS Engine/JsEngine"
+import JsEngine from "./pages/JS Engine/JsEngine"
 
 const App: React.FC = () => {
+  
+const navigate = useNavigate();
+const clerk = useClerk();
+const { isSignedIn } = useAuth();
+const handleSignIn = () => {
+  if (isSignedIn) {
+    navigate("/codes"); 
+  } else {
+    clerk.openSignIn({ redirectUrl: "/codes" }); // <-- Redirect automatically after signing in
+  }
+};
+
+const handleSignUp = () => {
+  if (isSignedIn) {
+    navigate("/codes"); 
+  } else {
+    clerk.openSignUp({ redirectUrl: "/codes" }); // <-- Redirect after signing up
+  }
+};
   return (
     <div style={{ fontFamily: 'system-ui, sans-serif', background: '#0F172A', color: '#E2E8F0', minHeight: '100vh' }}>
       {/* Navbar */}
@@ -49,11 +87,43 @@ const App: React.FC = () => {
         </div>
       </nav>
 
+       <ScrollToTop />
       {/* Routes */}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Index onSignIn={handleSignIn} onSignUp={handleSignUp} />} />
         <Route path="/sign-in" element={<SignIn routing="path" path="/sign-in" />} />
+        
         <Route path="/sign-up" element={<SignUp routing="path" path="/sign-up" />} />
+       <Route path="/visualize/:algorithmId" element={<AlgorithmPlayer />} />
+        <Route path="/visualize/algopage" element={<AlgoPage />} /> 
+
+        {/* Datastructure*/}
+        <Route path="/data-structures/arrays" element={<Array />} />
+        <Route path="/data-structures/stacks" element={<Stack />} />
+        <Route path="/data-structures/queues" element={<Queue />} />
+        <Route path="/data-structures/linked-lists" element={<LinkedList />} />
+        <Route path="/data-structures/trees" element={<BinarySearchTree />} />
+        <Route path="/data-structures/graphs" element={<BinarySearch />} />
+        <Route path="/data-structures/hashing" element={<BinarySearch />} />
+
+        {/* Algorithm :- Searching */}
+        <Route path="/algorithms/searching/binary-search" element={<BinarySearch />} />
+        <Route path="/algorithms/searching/linear-search" element={<BinarySearch />} />
+        
+        <Route path="/algorithms/searching/bfs" element={<BinarySearch />} />
+        
+        {/* Algorithm :- Sorting */}
+        <Route path="/algorithms/sorting/bubble-sort" element={<BubbleSort />} />
+        <Route path="/algorithms/sorting/merge-sort" element={<BubbleSort />} />
+        <Route path="/algorithms/sorting/quick-sort" element={<BubbleSort />} />
+        <Route path="/algorithms/sorting/heap-sort" element={<BubbleSort />} />
+        <Route path="/algorithms/sorting/insertion-sort" element={<BubbleSort />} />
+
+        <Route path="/algorithms/pathfinding/dijkstra" element={<Dijkstra />} />
+        
+        
+        <Route path="/JS-Engine" element={<JsEngine />} />
+        {/* <Route path="/index" element={<Index/>} /> */}
         <Route
           path="/codes"
           element={

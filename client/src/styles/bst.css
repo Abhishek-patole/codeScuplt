@@ -1,0 +1,278 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Modern BST Visualizer Design System */
+
+@layer base {
+  :root {
+    /* Modern Dark Theme */
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 20.2% 65.1%;
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+    --card: 224 71% 4%;
+    --card-foreground: 213 31% 91%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 222.2 84% 4.9%;
+    --secondary-foreground: 210 40% 98%;
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --ring: 216 34% 17%;
+    --radius: 0.75rem;
+
+    /* BST Specific Colors - Enhanced with vibrant gradients */
+    --node-default: 215 25% 27%;
+    --node-default-border: 215 20% 40%;
+    --node-current: 280 90% 65%;
+    --node-current-glow: 280 90% 75%;
+    --node-found: 142 76% 55%;
+    --node-found-glow: 142 76% 65%;
+    --node-visited: 217 91% 62%;
+    --node-visited-glow: 217 91% 72%;
+    --node-insert: 160 84% 56%;
+    --node-insert-glow: 160 84% 66%;
+    --node-delete: 0 84% 60%;
+    --node-delete-glow: 0 84% 70%;
+    
+    /* Enhanced Multi-stop Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(262 90% 65%) 0%, hsl(217 91% 60%) 50%, hsl(195 85% 58%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(215 30% 32%) 0%, hsl(215 25% 27%) 50%, hsl(215 20% 22%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 55%) 0%, hsl(155 80% 52%) 50%, hsl(168 76% 48%) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(280 90% 65%) 0%, hsl(290 85% 62%) 50%, hsl(300 80% 58%) 100%);
+    --gradient-insert: linear-gradient(135deg, hsl(160 84% 56%) 0%, hsl(170 80% 52%) 50%, hsl(180 76% 48%) 100%);
+    --gradient-delete: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(10 80% 58%) 50%, hsl(20 76% 56%) 100%);
+    
+    /* Glass Effects */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    
+    /* Animation Easings */
+    --ease-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  }
+}
+
+@layer components {
+  /* Glass Card Effect */
+  .glass-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--glass-shadow);
+    @apply rounded-xl;
+  }
+
+  /* BST Node Styles - Enhanced with smooth gradients */
+  .bst-node {
+    @apply relative flex items-center justify-center;
+    @apply w-12 h-12 rounded-full font-bold text-sm;
+    @apply cursor-pointer;
+    background: var(--gradient-secondary);
+    border: 3px solid hsl(var(--node-default-border));
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 0 transparent;
+    color: hsl(var(--foreground));
+    transform: scale(1);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .bst-node:hover {
+    transform: scale(1.15);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 25px hsl(var(--node-visited) / 0.4);
+    border-color: hsl(var(--node-visited));
+  }
+  
+  .bst-node--current {
+    background: var(--gradient-warning);
+    border-color: hsl(var(--node-current));
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 40px hsl(var(--node-current) / 0.7), 0 0 60px hsl(var(--node-current-glow) / 0.4);
+    animation: node-pulse 1.5s ease-in-out infinite;
+    color: hsl(224 71% 4%);
+  }
+  
+  .bst-node--found {
+    background: var(--gradient-success);
+    border-color: hsl(var(--node-found));
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 45px hsl(var(--node-found) / 0.8), 0 0 70px hsl(var(--node-found-glow) / 0.5);
+    animation: node-celebrate 0.8s var(--ease-bounce);
+    color: hsl(224 71% 4%);
+  }
+  
+  .bst-node--visited {
+    background: var(--gradient-primary);
+    border-color: hsl(var(--node-visited));
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 25px hsl(var(--node-visited) / 0.5);
+    color: hsl(224 71% 4%);
+  }
+  
+  .bst-node--insert {
+    background: var(--gradient-insert);
+    border-color: hsl(var(--node-insert));
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 40px hsl(var(--node-insert) / 0.7), 0 0 60px hsl(var(--node-insert-glow) / 0.4);
+    animation: node-pop-in 0.8s var(--ease-bounce);
+    color: hsl(224 71% 4%);
+  }
+  
+  .bst-node--delete {
+    background: var(--gradient-delete);
+    border-color: hsl(var(--node-delete));
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 40px hsl(var(--node-delete) / 0.7);
+    animation: node-fade-out 0.8s ease-out;
+    color: hsl(224 71% 4%);
+  }
+  
+  /* BST Edge Styles - Enhanced with gradients */
+  .bst-edge {
+    stroke: hsl(var(--node-default-border));
+    stroke-width: 2.5;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0.6;
+  }
+  
+  .bst-edge--active {
+    stroke: hsl(var(--node-current));
+    stroke-width: 5;
+    opacity: 1;
+    filter: drop-shadow(0 0 12px hsl(var(--node-current) / 0.8)) drop-shadow(0 0 20px hsl(var(--node-current-glow) / 0.5));
+    animation: edge-flow 1.2s ease-in-out infinite;
+  }
+  
+  .bst-edge--insert {
+    stroke: hsl(var(--node-insert));
+    stroke-width: 5;
+    opacity: 1;
+    filter: drop-shadow(0 0 12px hsl(var(--node-insert) / 0.8));
+    animation: edge-flow 1.2s ease-in-out infinite;
+  }
+  
+  /* Enhanced Control Panel */
+  .control-panel {
+    @apply glass-card p-6;
+  }
+  
+  /* Enhanced Control Buttons */
+  .control-btn {
+    @apply px-4 py-2.5 rounded-lg font-medium transition-all duration-300;
+    @apply border border-solid flex items-center gap-2 text-sm;
+    @apply hover:shadow-lg hover:scale-105;
+    color: hsl(var(--foreground));
+    background: hsl(var(--muted));
+    border-color: hsl(var(--border));
+  }
+  
+  .control-btn:hover:not(:disabled) {
+    background: hsl(var(--accent));
+    border-color: hsl(var(--primary));
+    transform: translateY(-2px) scale(1.02);
+  }
+  
+  .control-btn:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+  
+  .control-btn--primary {
+    background: var(--gradient-primary);
+    border-color: hsl(var(--node-visited));
+    color: hsl(224 71% 4%);
+    font-weight: 600;
+  }
+  
+  .control-btn--primary:hover:not(:disabled) {
+    box-shadow: 0 8px 25px hsl(var(--node-visited) / 0.4);
+    transform: translateY(-3px) scale(1.05);
+  }
+}
+
+/* Enhanced Custom Animations */
+@keyframes node-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 40px hsl(var(--node-current) / 0.7), 0 0 60px hsl(var(--node-current-glow) / 0.4);
+  }
+  50% { 
+    transform: scale(1.15);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 50px hsl(var(--node-current) / 0.9), 0 0 80px hsl(var(--node-current-glow) / 0.6);
+  }
+}
+
+@keyframes node-celebrate {
+  0% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.3) rotate(-5deg); }
+  50% { transform: scale(1.2) rotate(5deg); }
+  75% { transform: scale(1.3) rotate(-3deg); }
+  100% { transform: scale(1.15) rotate(0deg); }
+}
+
+@keyframes node-pop-in {
+  0% { 
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% { 
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(1);
+  }
+}
+
+@keyframes node-fade-out {
+  0% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.2);
+    opacity: 0.5;
+  }
+  100% { 
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes edge-flow {
+  0%, 100% { 
+    stroke-width: 5;
+    filter: drop-shadow(0 0 12px hsl(var(--node-current) / 0.8)) drop-shadow(0 0 20px hsl(var(--node-current-glow) / 0.5));
+  }
+  50% { 
+    stroke-width: 6;
+    filter: drop-shadow(0 0 16px hsl(var(--node-current) / 1)) drop-shadow(0 0 30px hsl(var(--node-current-glow) / 0.7));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--gradient-primary);
+    border-radius: 4px;
+  }
+}

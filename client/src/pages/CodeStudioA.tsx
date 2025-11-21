@@ -32,6 +32,7 @@ const CodeStudioA: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1000);
   const intervalRef = useRef<any>(null);
+  const [userInput, setUserInput] = useState("");
 
   // --- Load Files ---
   useEffect(() => {
@@ -175,14 +176,24 @@ class UniversalTracker:
             self.emit_step(f"Line {frame.f_lineno}", cur, changed, operation_str, visit_info, found_info, compare_op)
         self.last = dict(cur)
         return self.track
-def auto_visualize(code):
+def auto_visualize(code, inputs=None):
     tracker = UniversalTracker()
     _orig = sys.gettrace()
+
+    # --- prepare fake input() ---
+    if inputs is None:
+        inputs = []
+    def fake_input(prompt=""):
+        if inputs:
+            return inputs.pop(0)
+        raise Exception("No more user input available")
+
     sys.settrace(tracker.track)
     try:
-        exec(code, {})
+        exec(code, {"input": fake_input})   # ✅ inject our fake input
     finally:
         sys.settrace(_orig)
+
     for s in tracker.steps:
         sys.stdout.write("__VIS__"+json.dumps(s)+"\\n")
 `;
@@ -190,37 +201,43 @@ def auto_visualize(code):
   }, [pyodide]);
 
   // --- Run Code ---
-  const runCode = async () => {
-    if (!pyodide || !active) return;
-    setLogs([]);
-    setVisualSteps([]);
+const runCode = async (inputs: string[] = []) => {
+  if (!pyodide || !active) return;
+
+  setLogs([]);
+  setVisualSteps([]);
+  setCurrentStep(0);
+  setIsPlaying(false);
+
+  const rawLogs: string[] = [];
+
+  pyodide.setStdout({
+    batched: (s: string) =>
+      s.split(/\r?\n/).forEach((l) => l && rawLogs.push(l)),
+  });
+  pyodide.setStderr({
+    batched: (s: string) =>
+      s.split(/\r?\n/).forEach((l) => l && rawLogs.push("ERR: " + l)),
+  });
+
+  try {
+    // Pass inputs to Python
+    await pyodide.runPythonAsync(`
+auto_visualize(${JSON.stringify(active.content)}, inputs=${JSON.stringify(inputs)})
+    `);
+
+    const steps = rawLogs
+      .filter((l) => l.startsWith("__VIS__"))
+      .map((l) => JSON.parse(l.replace("__VIS__", "")));
+
+    setVisualSteps(steps);
+    setLogs(rawLogs.filter((l) => !l.startsWith("__VIS__")));
     setCurrentStep(0);
-    setIsPlaying(false);
+  } catch (err: any) {
+    setLogs((prev) => [...prev, "Runtime error: " + err]);
+  }
+};
 
-    const rawLogs: string[] = [];
-    pyodide.setStdout({
-      batched: (s: string) =>
-        s.split(/\r?\n/).forEach((l) => l && rawLogs.push(l)),
-    });
-    pyodide.setStderr({
-      batched: (s: string) =>
-        s.split(/\r?\n/).forEach((l) => l && rawLogs.push("ERR: " + l)),
-    });
-
-    try {
-      await pyodide.runPythonAsync(
-        `auto_visualize(${JSON.stringify(active.content)})`
-      );
-      const steps = rawLogs
-        .filter((l) => l.startsWith("__VIS__"))
-        .map((l) => JSON.parse(l.replace("__VIS__", "")));
-      setVisualSteps(steps);
-      setLogs(rawLogs.filter((l) => !l.startsWith("__VIS__")));
-      setCurrentStep(0);
-    } catch (err: any) {
-      setLogs((prev) => [...prev, "Runtime error: " + err]);
-    }
-  };
 
   // --- Auto play ---
   useEffect(() => {
@@ -514,48 +531,84 @@ def auto_visualize(code):
     {active?.title || "No file selected"}
   </strong>
 
-  {/* Run button */}
-  {active?.language === "python" && (
-    <button style={styles.button} onClick={runCode}>
-      🚀 Run & Visualize
-    </button>
-  )}
+
+
+{/* Run button */}
+{active?.language === "python" && (
+  <button
+    style={styles.button}
+    onClick={() => {
+      setSidebarOpen(!sidebarOpen);
+      setTimeout(() => {
+        runCode(userInput.split(/\r?\n/).filter(Boolean)); // 👈 pass user input
+      }, 1000);
+    }}
+  >
+    🚀 Run & Visualize
+  </button>
+)}
 </header>
 
 
         {/* Body */}
         <div style={sidebarOpen ? { padding: 12 } : styles.mainSplit}>
           {/* Editor */}
-          <section style={{ ...styles.panel, ...styles.editorWrap }}>
-            <div style={styles.editorHeader}>
-              <span>Editor</span>
-              <span style={{ opacity: 0.7, fontSize: 12 }}>
-                {active?.language?.toUpperCase() || ""}
-              </span>
-            </div>
-            <div style={styles.editor}>
-              {active ? (
-                <Editor
-                  height="100%"
-                  theme="vs-dark"
-                  language={active.language}
-                  value={active.content}
-                  onChange={(val) => setActivePatch({ content: val ?? "" })}
-                  options={{
-                    fontSize: 14,
-                    minimap: { enabled: false },
-                    fontLigatures: true,
-                    smoothScrolling: true,
-                    scrollbar: { verticalScrollbarSize: 10, horizontalScrollbarSize: 10 },
-                  }}
-                />
-              ) : (
-                <div style={{ padding: 24, color: "#9CA3AF" }}>
-                  Select or create a file to start coding.
-                </div>
-              )}
-            </div>
-          </section>
+           <section style={{ ...styles.panel, ...styles.editorWrap }}>
+    <div style={styles.editorHeader}>
+      <span>Editor</span>
+      <span style={{ opacity: 0.7, fontSize: 12 }}>
+        {active?.language?.toUpperCase() || ""}
+      </span>
+    </div>
+
+    {/* Wrap editor + input together */}
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      {/* Editor takes 75% */}
+      <div style={{ flex: "3 1 0" }}>
+        {active ? (
+          <Editor
+            height="100%"
+            theme="vs-dark"
+            language={active.language}
+            value={active.content}
+            onChange={(val) => setActivePatch({ content: val ?? "" })}
+            options={{
+              fontSize: 14,
+              minimap: { enabled: false },
+              fontLigatures: true,
+              smoothScrolling: true,
+              scrollbar: { verticalScrollbarSize: 10, horizontalScrollbarSize: 10 },
+            }}
+          />
+        ) : (
+          <div style={{ padding: 24, color: "#9CA3AF" }}>
+            Select or create a file to start coding.
+          </div>
+        )}
+      </div>
+
+      {/* Input takes 25% */}
+      <div style={{ flex: "1 1 0", marginTop: "8px" }}>
+        <textarea
+          placeholder="Enter inputs (one per line)"
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
+          style={{
+            width: "100%",
+            height: "100%",
+            padding: "8px",
+            fontFamily: "monospace",
+            fontSize: "14px",
+            borderRadius: "6px",
+            border: "1px solid #334155",
+            background: "#1E293B",
+            color: "#E2E8F0",
+            resize: "none",
+          }}
+        />
+      </div>
+    </div>
+  </section>
 
 
           {/* Visualization + Controls */}

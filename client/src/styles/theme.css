@@ -1,0 +1,156 @@
+/* === Import Font === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+/* === CSS Variables (Theme) === */
+:root {
+  --background-dark: #0f172a; /* Deep slate blue */
+  --surface-color: #1e293b;   /* Lighter slate for cards/containers */
+  --border-color: #334155;
+  --primary-glow: rgba(59, 130, 246, 0.5);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --success-color: #22c55e;
+  --warning-color: #f59e0b;
+  --action-color: #3b82f6; /* Blue for interactions */
+}
+
+/* === Global Styles === */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background-dark);
+  color: var(--text-primary);
+  min-height: 90vh;
+  padding: 1rem;
+}
+
+/* === Typography === */
+h1 {
+  color: var(--text-primary);
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+h2, h3 {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* === Layout for Home page === */
+.home-container {
+  display: grid;
+  /* Give the editor a bit more space, as is common in IDEs */
+  grid-template-columns: 55% 1fr;
+  gap: 1.5rem;
+  max-width: 1400px; /* Allow a wider layout */
+  margin: auto;
+}
+
+/* === Shared Container Styles === */
+.code-editor-container,
+.visualizer-container {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  overflow: hidden; /* Ensures child elements respect the border radius */
+  max-height: 650px;
+}
+
+.visualizer-container {
+  /* Set a minimum height to prevent collapse when empty */
+  min-height: 500px;
+  min-width: 435px;
+}
+
+/* --- Monaco Editor Specific --- */
+/* This class is added by the @monaco-editor/react component */
+.monaco-editor {
+  /* A slight glow to indicate the active line */
+  --monaco-single-line-highlight-background: rgba(59, 130, 246, 0.15) !important;
+}
+
+/* --- Visualizer Specific Styles --- */
+/* This will be the component you create later */
+.visualizer {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 90%;
+  overflow-y: auto; /* Allow scrolling if content is too tall */
+}
+
+/* --- Controls for the Visualizer --- */
+.controls {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap; /* Allow controls to wrap on smaller screens */
+  background: rgba(15, 23, 42, 0.7);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.controls button {
+  background: linear-gradient(145deg, #374151, #1f2937);
+  color: var(--text-primary);
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  transition: all 0.2s ease;
+}
+
+.controls button:hover {
+  transform: translateY(-2px);
+  border-color: var(--action-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 10px var(--primary-glow);
+}
+
+.controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.controls input[type="range"] {
+  width: 150px;
+  accent-color: var(--action-color);
+  cursor: pointer;
+}
+
+.controls span {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  min-width: 80px; /* Prevents layout shift */
+  text-align: center;
+}
+
+/* === Responsive Design === */
+@media (max-width: 950px) {
+  .home-container {
+    /* Stack the editor and visualizer vertically */
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  body {
+    padding: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+}

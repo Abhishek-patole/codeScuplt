@@ -1,6 +1,0 @@
-pk_test_cHJvYmFibGUtbGlvbi0xMi5jbGVyay5hY2NvdW50cy5kZXYk
-
-CLERK_PUBLISHABLE_KEY=pk_test_cHJvYmFibGUtbGlvbi0xMi5jbGVyay5hY2NvdW50cy5kZXYk
-CLERK_SECRET_KEY=sk_test_zV498NDBet3vYBYunDpVFxrHghFIcquAk89FGt3mAY
-
-D2R1iInxE9ftSnI9
